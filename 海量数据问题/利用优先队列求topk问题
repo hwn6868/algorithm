@@ -1,0 +1,17 @@
+public static int findKthLargest(int[] nums, int k) {
+
+        // 正确性判断
+        if (0 == nums.length || null == nums || k <= 0 || k > nums.length) {
+            return -1;
+        }
+
+        // 构造优先队列,默认为最小堆,传入自定义的比较器转换成最大堆
+        PriorityQueue<Integer> pq = new PriorityQueue<>((a, b) -> b - a);
+        for (Integer num : nums) {
+            pq.add(num);
+        }
+        for (int i = 0; i < k - 1; i++) {
+            pq.remove();
+        }
+        return pq.peek();
+    }

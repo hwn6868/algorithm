@@ -1,0 +1,8 @@
+ import java.util.*;
+ 
+ //暴力破解
+    public int findKthLargest2(int[] nums, int k) {
+        Arrays.sort(nums);//升序
+        return nums[nums.length - k];//最大元素
+//        return nums[k-1];//最小元素
+    }

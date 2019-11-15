@@ -1,0 +1,40 @@
+/**
+	 * 功能:选择排序
+	 * 算法思想:在未排序的区间里选择最小的数据元素放到已排好序的区间的末尾。
+	 * @param a:要排序的数组
+	 * @param n:数组的长度
+	 */
+	public static void selectionSort(int[] a, int n) {
+	   //如果数组为空,结束排序
+	   if (n <= 1) return;
+
+//	   for (int i = 0; i < n; ++i) {
+//	     // 查找最小值
+//	     int minIndex = i;
+//	     int minValue = a[i];
+//	     for (int j = i; j < n; ++j) {
+//	       if (a[j] < minValue) {
+//	         minValue = a[j];
+	   
+	    //外循环，i 用来标记未排序区间的第一个元素，将其假设为未排序区间的最小值
+	    for (int i = 0; i < n - 1; ++i) {
+	      // 查找最小值
+	      int minIndex = i;
+	      //在未排序区间进行遍历寻找最小数据
+	      for (int j = i + 1; j < n; ++j) {
+	    	//与当前最小数据进行比较
+	        if (a[j] < a[minIndex]) {
+	          //如果比当前最小数据还要小，则将下标给 minIndex
+	          minIndex = j;
+	        }
+	      }
+	      //如果当前的 i 就是最小数据，则继续寻找下一个数据
+	      if (minIndex == i) {
+	        continue;
+	      }
+	      // 将在区间选出的最小数据放到已排好数据的末尾
+	      int tmp = a[i];
+	      a[i] = a[minIndex];
+	      a[minIndex] = tmp;
+      } 
+   }

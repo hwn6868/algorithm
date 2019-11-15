@@ -6,15 +6,27 @@ hashing(哈希法)的概念
 散列法（Hashing）是一种将字符组成的字符串转换为固定长度（一般是更短长度）的数值或索引值的方法，称为散列法，也叫哈希法。
 由于通过更短的哈希值比用原始值进行数据库搜索更快，这种方法一般用来在数据库中建立索引并进行搜索，同时还用在各种解密算法中。
 
-对比：Hashtable、HashMap、TreeMap
+对比：Hashtable、HashMap、TreeMap、HashSet；主要的区别有：线程安全性，同步(synchronization)，以及速度。
 
-Hashtable 是早期Java类库提供的一个哈希表实现，本身是同步的，不支持 null 键和值，由于同步导致的性能开销，所以已经很少被推荐使用。
+Hashtable 是早期Java类库提供的一个哈希表实现，本身是同步（sychronized）的，不支持 null 键和值，由于同步导致的性能开销，所以已经很少被推荐使用。
+sychronized意味着在一次仅有一个线程能够更改Hashtable。就是说任何线程要更新Hashtable时要首先获得同步锁，
+其它线程要等到同步锁被释放之后才能再次获得同步锁更新Hashtable。
 
 HashMap与 HashTable主要区别在于 HashMap 不是同步的，支持 null 键和值等。通常情况下，HashMap 进行 put 或者 get 操作，可以达到常数时间的性能，
-所以它是绝大部分利用键值对存取场景的首选。
+所以它是绝大部分利用键值对存取场景的首选。若想同步，则使用ConcurrentHashMap。
+HashMap可以通过下面的语句进行同步：
+Map m = Collections.synchronizeMap(hashMap);
 
 TreeMap 则是基于红黑树的一种提供顺序访问的 Map，和 HashMap 不同，它的 get、put、remove 之类操作都是 O（log(n)）的时间复杂度，
 具体顺序可以由指定的 Comparator 来决定，或者根据键的自然顺序来判断。
+
+ Fail-safe和iterator迭代器相关。如果某个集合对象创建了Iterator或者ListIterator，然后其它的线程试图“结构上”更改集合对象，
+ 将会抛出ConcurrentModificationException异常。但其它线程可以通过set()方法更改集合对象是允许的，因为这并没有从“结构上”更改集合。
+ 但是假如已经从结构上进行了更改，再调用set()方法，将会抛出IllegalArgumentException异常。
+ 
+HashSet实现了Set接口，它不允许集合中有重复的值，当我们提到HashSet时，第一件事情就是在将对象存储在HashSet之前，要先确保对象重写equals()和hashCode()方法，
+这样才能比较对象的值是否相等，以确保set中没有储存相等的对象。如果我们没有重写这两个方法，将会使用这个方法的默认实现。
+public boolean add(Object o)方法用来在Set中添加元素，当元素值重复时则会立即返回false，如果成功添加的话会返回true。
 
 HashMap概念和底层结构
 
@@ -42,7 +54,7 @@ HashMap的工作原理 ：HashMap是基于散列法（又称哈希法）的原�
 
 HashMap具体的存取过程：
 
-put存值的方法，过程如下：
+put存值的方法，过程如下：put的是一个Entry对象，Entry对象包含key、value、下一个Entry对象的引用（类似于单链表）
 
 ①.判断键值对数组table[i]是否为空或为null，否则执行resize()进行扩容；
 
@@ -68,7 +80,8 @@ jdk1.6版本后使用位运算替代模运算，int index=hash&( Entry[].length 
 
 ③.比较桶的内部元素是否与key相等，若都不相等，则没有找到。相等，则取出相等记录的value。
 
-④.如果得到 key 所在的桶的头结点恰好是红黑树节点，就调用红黑树节点的 getTreeNode() 方法，否则就遍历链表节点。
+④.如果得到 key 所在的桶的头结点恰好是红黑树节点，就调用红黑树节点的 getTreeNode() 方法，否则就遍历链表节点，
+会调用keys.equals()方法去找到链表中正确的节点。
 getTreeNode 方法使通过调用树形节点的 find()方法进行查找。由于之前添加时已经保证这个树是有序的，因此查找时基本就是折半查找，效率很高。
 
 ⑤.如果对比节点的哈希值和要查找的哈希值相等，就会判断 key 是否相等，相等就直接返回；不相等就从子树中递归查找。
@@ -103,4 +116,11 @@ HashMap采用哪种方法解决冲突的呢？
 HashMap 就是使用链地址法来解决冲突的（jdk8中采用平衡树来替代链表存储冲突的元素，但hash() 方法原理相同）。当两个对象的hashcode相同时，
 它们的bucket位置相同，碰撞就会发生。此时，可以将 put 进来的 K- V 对象插入到链表的尾部。对于储存在同一个bucket位置的链表对象，
 可通过键对象的equals()方法用来找到键值对。
+
+为什么String, Interger这样的wrapper类适合作为键？ String, Interger这样的wrapper类作为HashMap的键是再适合不过了，而且String最为常用。
+因为String是不可变的，也是final的，而且已经重写了equals()和hashCode()方法了。其他的wrapper类也有这个特点。
+不可变性是必要的，因为为了要计算hashCode()，就要防止键值改变，如果键值在放入时和获取时返回不同的hashcode的话，
+那么就不能从HashMap中找到你想要的对象。不可变性还有其他的优点如线程安全。如果你可以仅仅通过将某个field声明成final就能保证hashCode是不变的，
+那么请这么做吧。因为获取对象的时候要用到equals()和hashCode()方法，那么键对象正确的重写这两个方法是非常重要的。
+如果两个不相等的对象返回不同的hashcode的话，那么碰撞的几率就会小些，这样就能提高HashMap的性能。
 

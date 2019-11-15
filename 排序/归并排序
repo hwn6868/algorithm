@@ -1,0 +1,57 @@
+//思想：分治法
+//将一个大的无序数组有序，我们可以把大的数组分成两个，
+//然后对这两个数组分别进行排序，之后在把这两个数组合并成一个有序的数组。由于两个小的数组都是有序的，所以在合并的时候是很快的。
+//通过递归的方式将大的数组一直分割，直到数组的大小为 1，此时只有一个元素，那么该数组就是有序的了，
+//之后再把两个数组大小为1的合并成一个大小为2的，再把两个大小为2的合并成4的 ….. 直到全部小的数组合并起来。
+//https://blog.csdn.net/qq_36442947/article/details/81612870
+//性质：1、时间复杂度：O(nlogn)  2、空间复杂度：O(n)  3、稳定排序  4、非原地排序
+public class MergeSort {
+        @Test
+    public void test(){
+        int[] a = { 49, 38, 65, 97, 76, 13, 27, 50 };
+        mergeSort(a, 0, a.length-1);
+        System.out.println("排好序的数组：");
+        for (int e : a)
+            System.out.print(e+" ");
+    }
+        public int[] mergeSort(int[] arr, int left, int right) {
+            // 如果 left == right，表示数组只有一个元素，则不用递归排序
+            if(left==right||arr.length<=1||a==null){
+              return arr;
+            }
+            if (left < right) {
+                // 把大的数组分隔成两个数组
+                int mid = (left + right) / 2;
+                // 对左半部分进行排序
+                arr = mergeSort(arr, left, mid);
+                // 对右半部分进行排序
+                arr = mergeSort(arr, mid + 1, right);
+                //进行合并
+                merge(arr, left, mid, right);
+            }
+            return arr;
+        }
+
+        // 合并函数，把两个有序的数组合并起来
+        // arr[left..mif]表示一个数组，arr[mid+1 .. right]表示一个数组
+        private  void merge(int[] arr, int left, int mid, int right) {
+            //先用一个临时数组把他们合并汇总起来
+            int[] a = new int[right - left + 1];
+            int i = left;
+            int j = mid + 1;
+            int k = 0;
+            while (i <= mid && j <= right) {
+                if (arr[i] < arr[j]) {
+                    a[k++] = arr[i++];
+                } else {
+                    a[k++] = arr[j++];
+                }
+            }
+            while (i <= mid) a[k++] = arr[i++];
+            while (j <= right) a[k++] = arr[j++];
+            // 把临时数组复制到原数组
+            for (i = 0; i < k; i++) {
+                arr[left++] = a[i];
+            }
+        }
+    }

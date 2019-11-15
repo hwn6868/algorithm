@@ -1,0 +1,44 @@
+//import java.util.*;
+public class HeapSort {
+  public static void main(String[] args){
+        int[] a={5,1,3,2,8};
+        heapSort(a);
+        for(int i:heapSort(a)){
+            System.out.print(i+" ");
+        }
+    }
+  //利用优先队列实现从小到大排序
+    public static int[] heapSort(int[] a) {
+        // 正确性判断
+        if (a.length<=1||a==null) {
+            return a;
+        }
+        int[] temp=new int[a.length];
+        PriorityQueue<Integer> pq = new PriorityQueue<>();
+        for (Integer num : a) {
+            pq.add(num);//将数组中的数据构成一个最小堆
+        }
+        for(int i=0;i<temp.length;i++){
+            // temp[i]=pq.peek();// peek() 方法用于检索该队列的头部。但它不会将其删除。
+            temp[i]=pq.poll();// poll() 方法检索并移除此queue队列表示的队列的头部。
+        }
+        return temp;
+    }
+    //利用优先队列实现从大到小排序
+    public static int[] heapSort2(int[] a) {
+        // 正确性判断
+        if (a.length<=1||a==null) {
+            return a;
+        }
+        int[] temp=new int[a.length];
+        PriorityQueue<Integer> pq = new PriorityQueue<>((c, d) -> d - c);
+        for (Integer num : a) {
+            pq.add(num);//将数组中的数据构成一个最小堆
+        }
+        for(int i=0;i<temp.length;i++){
+            // temp[i]=pq.peek();// peek() 方法用于检索该队列的头部。但它不会将其删除。
+            temp[i]=pq.poll();// poll() 方法检索并移除此queue队列表示的队列的头部。
+        }
+        return temp;
+    }
+}

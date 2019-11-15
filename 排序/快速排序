@@ -27,8 +27,8 @@
         private int partition(int[] arr, int left, int right) {
             //选取中轴元素
             int mid = arr[left];
-            int i = left + 1;
-            int j = right;
+            int i = left + 1;//哨兵i
+            int j = right;//哨兵j
             while (true) {
                 // 向右找到第一个小于等于 mid 的元素位置
                 while (i <= j && arr[i] <= mid) i++;
@@ -41,9 +41,9 @@
                 arr[i] = arr[j];
                 arr[j] = temp;
             }
-            arr[left] = arr[j];
+            arr[left] = arr[j];//此时i=j，即哨兵相遇了
             // 使中轴元素处于有序的位置
             arr[j] = mid;
-            return j;
+            return j;//返回哨兵i与j相遇时的下标
         }
     }

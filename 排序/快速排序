@@ -1,65 +1,49 @@
-public class QuickSort {
-	 public static void main(String[] args) {
-		 	QuickSort quickSort = new QuickSort();
-			int[] a = new int[] {4,3,7,2,9,1};
-			quickSort.quickSort(a, 6);
-			for (int i = 0; i < a.length; i++) {
-				System.out.print(a[i]+" ");
-			}
-	 }
-	
-	public void quickSort(int a[],int n) {
-		quickSortInternally(a,0,n-1);
-	}
-	
-	/**
-	 * 功能:快速排序递归函数
-	 * @param a 数组
-	 * @param i 起始位置
-	 * @param j 终止位置
-	 */
-	private void quickSortInternally(int[] a, int p, int r) {
-		//终止条件
-		if(p >= r) return;
-		
-		//获取区分点 pivot
-		int q = partition(a, p, r);
-		
-		//区分点两端开始递归
-		quickSortInternally(a,p,q-1);
-		quickSortInternally(a,q+1,r);
-	}
-	
-	/**
-	 * 功能:获取区分点
-	 * @param a 数组
-	 * @param p 起始位置
-	 * @param r 终止位置
-	 * @return 返回区分点
-	 */
-	public int partition(int[] a,int p,int r) {
-		//将最后一个元素作为区分点
-		int pivot = a[r];
-		int i = p;
-		
-		for (int j = p; j < r; ++j) {
-			if(a[j] < pivot) {
-				//确保 i 永远指向第一个大于 pivot 的数
-				if(i == j) {
-					i++;
-				}else {
-				    int tmp = a[i];
-		            a[i++] = a[j];
-		            a[j] = tmp;
-				}
-			}
+ //快速排序：性质：1、时间复杂度：O(nlogn)  2、空间复杂度：O(logn)  3、非稳定排序  4、原地排序
+ //我们从数组中选择一个元素，我们把这个元素称之为中轴元素吧，然后把数组中所有小于中轴元素的元素放在其左边，所有大于或等于中轴元素的元素放在其右边，
+// 显然，此时中轴元素所处的位置的是有序的。也就是说，我们无需再移动中轴元素的位置。
+//从中轴元素那里开始把大的数组切割成两个小的数组(两个数组都不包含中轴元素)，接着我们通过递归的方式，
+//让中轴元素左边的数组和右边的数组也重复同样的操作，直到数组的大小为1，此时每个元素都处于有序的位置。
+//https://blog.csdn.net/u014241071/article/details/81565148
+    public class QuickSort {
+	    public static void main(String[] args){
+		int[] arr = {10,7,2,4,7,62,3,4,2,1,8,9,19};
+		quickSort(arr, 0, arr.length-1);
+		for (int i = 0; i < arr.length; i++) {
+		    System.out.println(arr[i]);
 		}
-		
-		int temp = a[i];
-		a[i] = a[r];
-		a[r] = temp;
-		
-		System.out.println("i=" + i);
-		return i;
-	}
-}
+	    }
+        public int[] quickSort(int[] arr, int left, int right) {
+	    if(a.length<=1||a==null)return arr;
+            if (left < right) {
+                //获取中轴元素所处的位置
+                int mid = partition(arr, left, right);
+                //进行分割
+                arr = quickSort(arr, left, mid - 1);
+                arr = quickSort(arr, mid + 1, right);
+            }
+            return arr;
+        }
+
+        private int partition(int[] arr, int left, int right) {
+            //选取中轴元素
+            int mid = arr[left];
+            int i = left + 1;
+            int j = right;
+            while (true) {
+                // 向右找到第一个小于等于 mid 的元素位置
+                while (i <= j && arr[i] <= mid) i++;
+                // 向左找到第一个大于等于 mid 的元素位置
+                while (i <= j && arr[j] >= mid) j--;
+                if (i >= j)
+                    break;
+                //交换两个元素的位置，使得左边的元素不大于mid,右边的不小于mid
+                int temp = arr[i];
+                arr[i] = arr[j];
+                arr[j] = temp;
+            }
+            arr[left] = arr[j];
+            // 使中轴元素处于有序的位置
+            arr[j] = mid;
+            return j;
+        }
+    }

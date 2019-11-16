@@ -89,4 +89,28 @@ public class BinarySearchTree<AnyType extends Comparable<? super AnyType>> {
         }
         return t;
     }
+    //先序遍历树的节点,t初始值为root节点
+    public void xxbl(BinaryNode<AnyType> t){
+        if(t!=null){
+            System.out.println(t.element);
+            xxbl(t.left);
+            xxbl(t.right);
+        }
+    }
+    //中序遍历树的节点
+    public void zxbl(BinaryNode<AnyType> t){
+        if(t!=null){
+            xxbl(t.left);
+            System.out.println(t.element);
+            xxbl(t.right);
+        }
+    }
+    //后序遍历树的节点
+    public void hxbl(BinaryNode<AnyType> t){
+        if(t!=null){
+            xxbl(t.left);
+            xxbl(t.right);
+            System.out.println(t.element);
+        }
+    }
 }
